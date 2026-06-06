@@ -1,0 +1,26 @@
+@startuml
+title Warmhouse System Сomponent Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container(apiGateway, "API Gateway", "HTTP API", "Принимает запросы пользователя и направляет их к микросервисам")
+Container_Ext(heatingSystem, "Heating system", "Прибор отопления")
+ContainerDb_Ext(heatingDb, "Heating db", "База данных сервиса управления отоплением")
+
+Container_Boundary(heatingService, "Heating Management Service", "Go") {
+    Component(apiController, "API Controller", "HTTP API", "Внутренний компонент Heating Management Service. Принимает запросы внутри сервиса")
+    Component(ServiceLayer, "Service Layer", "Основная логика")
+    ' для работы с базой данных
+    Component(RepositoryLayer, "Repository Layer", "Компонент для работы с базой данных")
+}
+
+Rel(apiGateway, apiController, "Передаёт команду включения/выключения")
+Rel(apiController, ServiceLayer, "Передаёт команду")
+Rel(ServiceLayer, RepositoryLayer, "Читает и сохраняет текущее состояние")
+Rel(RepositoryLayer, heatingDb, "Читает и сохраняет данные")
+
+Rel(ServiceLayer, heatingSystem, "Отправляет команду включения/выключения")
+
+@enduml

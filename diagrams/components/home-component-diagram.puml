@@ -1,0 +1,32 @@
+@startuml
+title Warmhouse System Сomponent Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container(apiGateway, "API Gateway", "HTTP API", "Принимает запросы и направляет их к микросервисам")
+ContainerDb_Ext(homeDb, "Home db", "База данных домов")
+Container_Ext(userService, "User Service", "Go", "Управляет пользователями и доступом")
+
+Container_Boundary(homeService, "Home Management Service", "Go") {
+    Component(apiController, "API Controller", "HTTP API", "Принимает запросы из других микросервисов")
+    Component(serviceLayer, "Service Layer", "Application Service", "Обрабатывает логику управления домами")
+    ' для работы с базой данных
+    Component(repositoryLayer, "RepositoryLayer", "Компонент для работы с базой данных")
+
+    Component(userClient, "User Client", "HTTP Client", "Получает информацию о пользователе и правах доступа")
+}
+
+
+
+Rel(apiGateway, apiController, "Передаёт запросы пользователя")
+Rel(apiController, serviceLayer, "Передаёт запрос на управление умным домом")
+
+Rel(serviceLayer, repositoryLayer, "Читает и сохраняет информацию о доме")
+Rel(repositoryLayer, homeDb, "Читает и записывает данные")
+
+Rel(serviceLayer, userClient, "Проверяет владельца дома")
+Rel(userClient, userService, "Запрашивает информацию о пользователе")
+
+@enduml
