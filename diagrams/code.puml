@@ -1,0 +1,36 @@
+@startuml
+title Warmhouse System Code Diagram
+
+top to bottom direction
+
+class TemperatureController {
+  +getCurrentTemperatureData(sensorId string)
+  +changeData(data TemperatureRequest)
+}
+
+class TemperatureService {
+  +getTemperature(id string)
+  +checkTemperature()
+}
+
+class TemperatureRepository {
+  +save(data TemperatureRequest)
+  +getSensorById(id string)
+}
+
+class SensorClient {
+  +getSensor(sensorId string)
+  +checkSensor(sensorId string)
+}
+
+class TemperatureRequest {
+  +sensorId string
+  +value float64
+}
+
+TemperatureController --> TemperatureService
+TemperatureService --> SensorClient
+TemperatureController --> TemperatureRequest
+TemperatureService --> TemperatureRepository
+
+@enduml

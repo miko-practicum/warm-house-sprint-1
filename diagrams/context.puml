@@ -3,10 +3,10 @@ title Warmhouse system Context Diagram
 
 top to bottom direction
 
-!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Context.puml
 
 Person(user, "User", "Пользователь системы умного дома")
-System(WarmhouseSystem, "Warnhouse system", "Монолитное приложение для управления отоплением и мониторинга температуры")
+System(WarmhouseSystem, "Warmhouse system", "Монолитное приложение для управления отоплением и мониторинга температуры")
 
 System_Ext(sensor, "Temperature Sensor", "Датчик температуры в доме")
 System_Ext(heating, "Heating System", "Система отопления в доме пользователя")
