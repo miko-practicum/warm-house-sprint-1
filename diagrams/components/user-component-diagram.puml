@@ -1,0 +1,31 @@
+@startuml
+title Warmhouse System Сomponent Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container(apiGateway, "API Gateway", "HTTP API", "Принимает запросы пользователя и направляет их к микросервисам")
+ContainerDb_Ext(userDb, "User db", "База данных управления пользователями")
+
+Container_Boundary(userService, "User Management Service", "Go") {
+    Component(userController, "User Controller", "HTTP API", "Принимает запросы на регистрацию, вход и изменение профиля")
+    Component(authService, "Auth Service", "Application Service", "Проверяет учётные данные пользователя")
+    Component(accessControlService, "Access Control Service", "Application Service", "Проверяет права доступа пользователя")
+
+    Component(userAppService, "User Service", "Application Service", "Обрабатывает логику управления пользователями")
+    ' для работы с базой данных в
+    Component(userRepository, "Repository Layer", "Компонент для работы с базой данных")
+}
+
+Rel(apiGateway, userController, "Передаёт запросы пользователя")
+Rel(userController, authService, "Передаёт данные для входа")
+Rel(userController, userAppService, "Передаёт запрос на управление профилем")
+Rel(userController, accessControlService, "Передаёт запрос на проверку доступа")
+
+Rel(authService, userRepository, "Получает данные пользователя")
+Rel(accessControlService, userRepository, "Получает права пользователя")
+Rel(userAppService, userRepository, "Читает и сохраняет данные пользователя")
+Rel(userAppService, userDb, "Читает и записывает данные")
+
+@enduml

@@ -1,0 +1,38 @@
+@startuml
+title Warmhouse System Сomponent Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Container(apiGateway, "API Gateway", "HTTP API", "Принимает запросы и направляет их к микросервисам")
+ContainerDb_Ext(sensorDb, "Sensor db", "База данных датчиков")
+Container_Ext(sensor, "Sensor", "Физический датчик температуры")
+Container_Ext(temperatureService, "Temperature", "Сервис температуры")
+
+Container_Boundary(sensorService, "Sensor Management Service", "Go") {
+    Component(apiController, "API Controller", "HTTP API", "Принимает запросы из других микросервисов")
+    Component(sensorDataReceiver, "Sensor Data Receiver", "HTTP/Event Handler", "Принимает запросы на регистрацию и управление датчиками")
+
+    Component(serviceLayer, "Service Layer", "Application Service", "Обрабатывает логику управления датчиками")
+    ' для работы с базой данных
+    Component(repositoryLayer, "RepositoryLayer", "Компонент для работы с базой данных")
+
+    Component(temperatureClient, "Temperature Client", "Обмен данными о температуре")
+}
+
+
+
+Rel(apiGateway, apiController, "Передаёт запросы пользователя")
+Rel(apiController, serviceLayer, "Передаёт запрос на управление датчиком")
+
+Rel(sensor, sensorDataReceiver, "Передаёт данные с датчика")
+Rel(sensorDataReceiver, serviceLayer, "Передаёт данные для обработки")
+
+Rel(serviceLayer, repositoryLayer, "Читает и сохраняет информацию о датчике")
+Rel(repositoryLayer, sensorDb, "Читает и записывает данные")
+
+Rel(serviceLayer, temperatureClient, "Передача данных температуры")
+Rel(temperatureClient, temperatureService, "Передача данных температуры в микросервис температуры")
+
+@enduml

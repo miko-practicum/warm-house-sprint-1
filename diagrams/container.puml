@@ -1,0 +1,51 @@
+@startuml
+title Warmhouse System Container Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User", "Пользователь системы умного дома")
+
+System_Ext(sensor, "Temperature Sensor", "Датчик температуры в доме")
+System_Ext(heating, "Heating System", "Система отопления в доме пользователя")
+
+Container_Boundary(warmhouseSystem, "Warmhouse System") {
+    Container(apiGateway, "API Gateway", "HTTP API", "Принимает запросы пользователя и направляет их к микросервисам")
+
+    Container(temperatureService, "Temperature Monitoring Service", "Go", "Получает и хранит температурные показания")
+    Container(heatingService, "Heating Management Service", "Go", "Управляет включением и выключением отопления")
+    Container(userService, "User Service", "Go", "Управление данными пользователя")
+    Container(homeService, "Home Service", "Go", "Менеджмент домов")
+    Container(sensorService, "Sensor Service", "Go", "Управление датчиками")
+
+    ContainerDb(userDb, "User DB", "PostgreSQL", "Хранит пользователей и права доступа")
+    ContainerDb(homeDb, "Home DB", "PostgreSQL", "Хранит дома и помещения")
+    ContainerDb(sensorDb, "Sensor DB", "PostgreSQL", "Хранит информацию о датчиках")
+    ContainerDb(temperatureDb, "Temperature DB", "PostgreSQL", "Хранит температурные показания")
+    ContainerDb(heatingDb, "Heating DB", "PostgreSQL", "Хранит состояние отопления")
+}
+
+Rel(user, apiGateway, "Использует систему через HTTP API")
+
+Rel(apiGateway, temperatureService, "Получает данные о температуре")
+Rel(apiGateway, heatingService, "Отправляет команды управления отоплением")
+Rel(apiGateway, userService, "Проверяет доступ пользователя к системе")
+Rel(apiGateway, homeService, "Получает данные о домах")
+Rel(apiGateway, sensorService, "Получает данные о датчиках")
+
+Rel(homeService, userService, "Проверяет владельца дома и права доступа")
+
+Rel(sensor, sensorService, "Передает данные с датчика")
+Rel(sensorService, temperatureService, "Передает температурные показания")
+Rel(temperatureService, sensorService, "Получает информацию о датчике")
+Rel(temperatureService, homeService, "Получает расположение датчика")
+Rel(heatingService, heating, "Отправляет команды включения и выключения отопления")
+
+' Db
+Rel(userService, userDb, "Читает и сохраняет данные о пользователях")
+Rel(homeService, homeDb, "Читает и сохраняет данные о домах")
+Rel(sensorService, sensorDb, "Читает и сохраняет данные о датчиках")
+Rel(temperatureService, temperatureDb, "Читает и сохраняет данные о температуре")
+Rel(heatingService, heatingDb, "Читает и сохраняет данные о системе отопления")
+@enduml
