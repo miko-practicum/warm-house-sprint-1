@@ -18,8 +18,6 @@ Container_Boundary(homeService, "Home Management Service", "Go") {
     Component(userClient, "User Client", "HTTP Client", "Получает информацию о пользователе и правах доступа")
 }
 
-
-
 Rel(apiGateway, apiController, "Передаёт запросы пользователя")
 Rel(apiController, serviceLayer, "Передаёт запрос на управление умным домом")
 
